@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'recorder.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,16 +78,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
-    RichText(
-      text: const TextSpan(
-        text: 'Hello ',
-        style: optionStyle,
-        children: <TextSpan>[
-          TextSpan(text: 'bold', style: TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: ' world!'),
-        ],
-      ),
-    ),
+    const SimpleRecorder(),
     RichText(
       text: const TextSpan(
         text: 'Hello ',
