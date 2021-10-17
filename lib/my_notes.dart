@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:mock_data/mock_data.dart';
 
 import 'package:flutter/material.dart';
 
@@ -22,7 +21,6 @@ class _MyNotesState extends State<MyNotes> {
 
     if (res.statusCode == 200) {
       var v = json.decode(res.body);
-      print(v);
       setState(() {
         notes = v;
       });
@@ -51,11 +49,10 @@ class _MyNotesState extends State<MyNotes> {
         padding: const EdgeInsets.all(8),
         itemCount: notes.length,
         itemBuilder: (BuildContext context, int index) {
-          DateTime noteDate = mockDate(DateTime.parse('2021-10-16 00:18:04'));
           return ListTile(
             leading: const Icon(Icons.album),
             title: Text('${notes[index]['note']}'),
-            subtitle: Text(noteDate.toLocal().toString()),
+            subtitle: Text(notes[index]['time']),
           );
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(),
