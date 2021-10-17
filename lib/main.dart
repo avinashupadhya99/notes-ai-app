@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'recorder.dart';
+import 'my_notes.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 void main() {
   runApp(const MyApp());
@@ -79,16 +83,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static final List<Widget> _widgetOptions = <Widget>[
     const SimpleRecorder(),
-    RichText(
-      text: const TextSpan(
-        text: 'Hello ',
-        style: optionStyle,
-        children: <TextSpan>[
-          TextSpan(text: 'bold', style: TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: ' notes!'),
-        ],
-      ),
-    ),
+    const MyNotes(),
   ];
 
   void _onItemTapped(int index) {
