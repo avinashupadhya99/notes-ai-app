@@ -6,6 +6,7 @@ import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:dio/dio.dart';
 
 typedef _Fn = void Function();
 
@@ -256,20 +257,24 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
             label: const Text('Upload audio file',
                 style: TextStyle(fontSize: 25, fontFamily: 'RaleWay')),
             onPressed: () async {
-              var postUri =
-                  Uri.parse("https://wenote-api.neeltron.repl.co/input");
-              var request = http.MultipartRequest("POST", postUri);
+              var dio = Dio();
               var picked = await FilePicker.platform.pickFiles();
 
               if (picked != null) {
                 print(picked.files.first.name);
-                request.files.add(http.MultipartFile.fromBytes(
-                    'file', picked.files.first.bytes!));
-
-                request.send().then((response) {
-                  if (response.statusCode == 200 || response.statusCode == 201)
-                    print("Uploaded!");
+                PlatformFile file = picked.files.first;
+                print('${file.size}');
+                FormData formData = FormData.fromMap({
+                  "file": await MultipartFile.fromBytes(file.bytes!,
+                      filename: file.name)
                 });
+                var response = await dio.post(
+                    'https://wenote-api.neeltron.repl.co/input',
+                    data: formData);
+                print('${response.statusCode}');
+                if (response.statusCode == 200 || response.statusCode == 201) {
+                  print("Uploaded!");
+                }
               }
             },
           ),
