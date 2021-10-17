@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:mock_data/mock_data.dart';
 
 import 'package:flutter/material.dart';
 
@@ -16,13 +17,15 @@ class _MyNotesState extends State<MyNotes> {
   List notes = List.empty();
 
   void getList() async {
-    final res = await http.get(Uri.parse(
-        "https://WildAware-Server-and-Hardware.neeltron.repl.co/output"));
+    final res = await http
+        .get(Uri.parse("https://wenote-api.neeltron.repl.co/display"));
 
     if (res.statusCode == 200) {
       var v = json.decode(res.body);
       print(v);
-      notes = v;
+      setState(() {
+        notes = v;
+      });
     }
   }
 
@@ -37,6 +40,7 @@ class _MyNotesState extends State<MyNotes> {
       );
     }
     return Column(children: <Widget>[
+      const Text('My Notes', style: TextStyle(fontSize: 50)),
       TextField(
         onChanged: (value) => {},
         decoration: const InputDecoration(
@@ -47,32 +51,12 @@ class _MyNotesState extends State<MyNotes> {
         padding: const EdgeInsets.all(8),
         itemCount: notes.length,
         itemBuilder: (BuildContext context, int index) {
-          return Card(
-              child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Image.network(
-                notes[index]['url'],
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              ListTile(
-                leading: const Icon(Icons.album),
-                title: Text('${notes[index]['aname']}'),
-                subtitle: Text('${notes[index]['desc']}'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Found at ${notes[index]['loc']}'),
-                  TextButton(
-                    child: const Text('Report'),
-                    onPressed: () {/* ... */},
-                  ),
-                ],
-              ),
-            ],
-          ));
+          DateTime noteDate = mockDate(DateTime.parse('2021-10-16 00:18:04'));
+          return ListTile(
+            leading: const Icon(Icons.album),
+            title: Text('${notes[index]['note']}'),
+            subtitle: Text(noteDate.toLocal().toString()),
+          );
         },
         separatorBuilder: (BuildContext context, int index) => const Divider(),
       ))
