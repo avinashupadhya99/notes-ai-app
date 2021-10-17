@@ -160,7 +160,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                   children: <Widget>[
                     const Text(
                       'Record your notes here',
-                      style: TextStyle(fontSize: 80),
+                      style: TextStyle(fontSize: 80, color: Colors.white),
                     ),
                     Text(
                       _mPlayer!.isPlaying
