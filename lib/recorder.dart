@@ -134,158 +134,153 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('WeNote'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 400.0,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.fromARGB(255, 2, 199, 226),
+                  Color.fromARGB(255, 6, 75, 210)
+                ],
+              ),
+              borderRadius: BorderRadius.vertical(
+                bottom:
+                    Radius.elliptical(MediaQuery.of(context).size.width, 100.0),
+              ),
+            ),
+            child: Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text(
+                      'Record your notes here',
+                      style: TextStyle(fontSize: 80, color: Colors.white),
+                    ),
+                    Text(
+                      _mPlayer!.isPlaying
+                          ? 'Playback in progress'
+                          : 'Player is stopped',
+                      style: const TextStyle(fontSize: 30),
+                    )
+                  ]),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                height: 400.0,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromARGB(255, 2, 199, 226),
-                      Color.fromARGB(255, 6, 75, 210)
-                    ],
-                  ),
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.elliptical(
-                        MediaQuery.of(context).size.width, 100.0),
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Text(
-                          'Record your notes here',
-                          style: TextStyle(fontSize: 80, color: Colors.white),
-                        ),
-                        Text(
-                          _mPlayer!.isPlaying
-                              ? 'Playback in progress'
-                              : 'Player is stopped',
-                          style: const TextStyle(fontSize: 30),
-                        )
-                      ]),
-                ),
+              buildElevatedButton(
+                icon: Icons.mic,
+                iconColor: Colors.red,
+                disableCondition: _mRecorder!.isRecording,
+                f: record,
               ),
               const SizedBox(
-                height: 20,
+                width: 30,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  buildElevatedButton(
-                    icon: Icons.mic,
-                    iconColor: Colors.red,
-                    disableCondition: _mRecorder!.isRecording,
-                    f: record,
-                  ),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  buildElevatedButton(
-                    icon: Icons.stop,
-                    iconColor: Colors.black,
-                    disableCondition: !_mRecorder!.isRecording,
-                    f: stopRecorder,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  buildElevatedButton(
-                    icon: Icons.play_arrow,
-                    iconColor: Colors.black,
-                    disableCondition: !_mPlayer!.isStopped || !_mplaybackReady,
-                    f: play,
-                  ),
-                  const SizedBox(
-                    width: 30,
-                  ),
-                  buildElevatedButton(
-                    icon: Icons.stop,
-                    iconColor: Colors.black,
-                    disableCondition: _mPlayer!.isStopped,
-                    f: stopPlayer,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  elevation: 10.0,
-                ),
-                onPressed: () {
-                  setState(() {});
-                  if (!_mRecorder!.isRecording) play();
-                  if (_mRecorder!.isRecording) stopPlayer();
-                },
-                icon: _mRecorder!.isRecording
-                    ? const Icon(
-                        Icons.stop,
-                      )
-                    : const Icon(Icons.play_arrow),
-                label: _mRecorder!.isRecording
-                    ? const Text(
-                        "Stop Playing",
-                        style: TextStyle(
-                          fontSize: 25,
-                        ),
-                      )
-                    : const Text(
-                        "Start Playing",
-                        style: TextStyle(
-                          fontSize: 25,
-                        ),
-                      ),
-              ),
-              const Text('OR',
-                  style: TextStyle(
-                    fontSize: 20,
-                  )),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.upload_file),
-                label: const Text('Upload audio file',
-                    style: TextStyle(fontSize: 25, fontFamily: 'RaleWay')),
-                onPressed: () async {
-                  var dio = Dio();
-                  var picked = await FilePicker.platform.pickFiles();
-
-                  if (picked != null) {
-                    print(picked.files.first.name);
-                    PlatformFile file = picked.files.first;
-                    print('${file.size}');
-                    FormData formData = FormData.fromMap({
-                      "file": await MultipartFile.fromBytes(file.bytes!,
-                          filename: file.name)
-                    });
-                    var response = await dio.post(
-                        'https://wenote-api.neeltron.repl.co/input',
-                        data: formData);
-                    print('${response.statusCode}');
-                    if (response.statusCode == 200 ||
-                        response.statusCode == 201) {
-                      print("Uploaded!");
-                    }
-                  }
-                },
+              buildElevatedButton(
+                icon: Icons.stop,
+                iconColor: Colors.black,
+                disableCondition: !_mRecorder!.isRecording,
+                f: stopRecorder,
               ),
             ],
           ),
-        ));
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              buildElevatedButton(
+                icon: Icons.play_arrow,
+                iconColor: Colors.black,
+                disableCondition: !_mPlayer!.isStopped || !_mplaybackReady,
+                f: play,
+              ),
+              const SizedBox(
+                width: 30,
+              ),
+              buildElevatedButton(
+                icon: Icons.stop,
+                iconColor: Colors.black,
+                disableCondition: _mPlayer!.isStopped,
+                f: stopPlayer,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              elevation: 10.0,
+            ),
+            onPressed: () {
+              setState(() {});
+              if (!_mRecorder!.isRecording) play();
+              if (_mRecorder!.isRecording) stopPlayer();
+            },
+            icon: _mRecorder!.isRecording
+                ? const Icon(
+                    Icons.stop,
+                  )
+                : const Icon(Icons.play_arrow),
+            label: _mRecorder!.isRecording
+                ? const Text(
+                    "Stop Playing",
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  )
+                : const Text(
+                    "Start Playing",
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+          ),
+          const Text('OR',
+              style: TextStyle(
+                fontSize: 20,
+              )),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Upload audio file',
+                style: TextStyle(fontSize: 25, fontFamily: 'RaleWay')),
+            onPressed: () async {
+              var dio = Dio();
+              var picked = await FilePicker.platform.pickFiles();
+
+              if (picked != null) {
+                print(picked.files.first.name);
+                PlatformFile file = picked.files.first;
+                print('${file.size}');
+                FormData formData = FormData.fromMap({
+                  "file": await MultipartFile.fromBytes(file.bytes!,
+                      filename: file.name)
+                });
+                var response = await dio.post(
+                    'https://wenote-api.neeltron.repl.co/input',
+                    data: formData);
+                print('${response.statusCode}');
+                if (response.statusCode == 200 || response.statusCode == 201) {
+                  print("Uploaded!");
+                }
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   ElevatedButton buildElevatedButton(
