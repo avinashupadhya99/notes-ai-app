@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
+import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
 
 typedef _Fn = void Function();
 
@@ -244,6 +246,32 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                       fontSize: 25,
                     ),
                   ),
+          ),
+          const Text('OR',
+              style: TextStyle(
+                fontSize: 20,
+              )),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Upload audio file',
+                style: TextStyle(fontSize: 25, fontFamily: 'RaleWay')),
+            onPressed: () async {
+              var postUri =
+                  Uri.parse("https://wenote-api.neeltron.repl.co/input");
+              var request = http.MultipartRequest("POST", postUri);
+              var picked = await FilePicker.platform.pickFiles();
+
+              if (picked != null) {
+                print(picked.files.first.name);
+                request.files.add(http.MultipartFile.fromBytes(
+                    'file', picked.files.first.bytes!));
+
+                request.send().then((response) {
+                  if (response.statusCode == 200 || response.statusCode == 201)
+                    print("Uploaded!");
+                });
+              }
+            },
           ),
         ],
       ),
