@@ -131,7 +131,11 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Scaffold(
+        appBar: AppBar(
+        title: Text('WeNote'),
+    ),
+      body: SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -157,13 +161,13 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                   children: <Widget>[
                     const Text(
                       'Record your notes here',
-                      style: TextStyle(fontSize: 80),
+                      style: TextStyle(fontSize: 40),
                     ),
                     Text(
                       _mPlayer!.isPlaying
                           ? 'Playback in progress'
                           : 'Player is stopped',
-                      style: const TextStyle(fontSize: 70),
+                      style: const TextStyle(fontSize: 30),
                     )
                   ]),
             ),
@@ -247,7 +251,9 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
           ),
         ],
       ),
+    )
     );
+
   }
 
   ElevatedButton buildElevatedButton(
