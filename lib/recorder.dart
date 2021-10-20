@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dio/dio.dart';
+import 'dart:html';
 
 typedef _Fn = void Function();
 
@@ -27,6 +28,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
+  final Storage _localStorage = window.sessionStorage;
 
   @override
   void initState() {
@@ -86,10 +88,28 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   }
 
   void stopRecorder() async {
-    await _mRecorder!.stopRecorder().then((value) {
+    await _mRecorder!.stopRecorder().then((value) async {
       setState(() {
         _mplaybackReady = true;
       });
+      var dio = Dio();
+      print(_localStorage[_mPath]);
+      AnchorElement anchorElement = AnchorElement(href: _localStorage[_mPath]);
+      anchorElement.download = _localStorage[_mPath];
+      anchorElement.click();
+      http.Response audioResponse = await http.get(
+        Uri.parse(_localStorage[_mPath]!),
+      );
+      dio.options.contentType = Headers.contentTypeHeader;
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromBytes(audioResponse.bodyBytes,
+            filename: _mPath)
+      });
+      var response = await dio.post('https://wenote-api.neeltron.repl.co/input',
+          data: formData);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("Uploaded!");
+      }
     });
   }
 
@@ -106,6 +126,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
               setState(() {});
             })
         .then((value) {
+      print(value);
       setState(() {});
     });
   }
